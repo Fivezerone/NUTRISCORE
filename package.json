@@ -1,0 +1,28 @@
+{
+  "name": "nutriscore",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run lint && npm run typecheck"
+  },
+  "dependencies": {
+    "idb": "^8.0.3",
+    "preact": "^10.24.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.0",
+    "@types/chrome": "^0.0.268",
+    "@types/node": "^22.10.0",
+    "eslint": "^9.9.0",
+    "globals": "^15.9.0",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.0.1",
+    "vite": "^6.0.11"
+  }
+}

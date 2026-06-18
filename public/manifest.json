@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "NutriScore Checkout Tool",
+  "version": "0.1.0",
+  "description": "Scans grocery pages, fetches nutrition data, and surfaces Nutri-Score insights in a shadow DOM widget.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://www.jumia.co.ke/*",
+    "https://*.jumia.co.ke/*",
+    "https://world.openfoodfacts.org/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.jumia.co.ke/*", "https://*.jumia.co.ke/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "NutriScore",
+    "default_popup": "popup.html"
+  },
+  "options_page": "dashboard.html"
+}
