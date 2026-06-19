@@ -1,58 +1,40 @@
-# NutriScore Checkout Tool
+# NUTRISCORE
 
-A Chrome extension (Manifest V3) that scores grocery products nutritionally at checkout on Jumia Kenya — built during the AfyaVentures internship program at JHUB Africa, JKUAT.
+Chrome Extension scaffold for the NutriScore checkout tool.
 
-**Project:** NUT-04 | AfyaVentures Nutrition Theme
+## Phase 1 Deliverables
 
----
+The repo now includes a Manifest V3 extension layout, a Carrefour Kenya-targeted MutationObserver scraper, a shadow-DOM content script widget, an IndexedDB persistence layer, and GitHub Actions CI for linting, type checking, and builds.
 
 ## Architecture
 
-Three independent browser execution contexts, each its own entry point and bundle:
-
-| Context | Entry | What it does |
-|---|---|---|
-| Content Script | `src/content-script/index.tsx` | Scrapes Jumia product cards, injects NutriScore badges into a **Shadow DOM** root per card, messages the background worker for scores |
-| Background Service Worker | `src/background/service-worker.ts` | Receives `SCORE_PRODUCT` messages, queries Open Food Facts + curated Kenyan dataset, runs Nutri-Score formula, returns result |
-| Popup | `src/popup/` | Toolbar popup — lists products scanned on the current tab with their grades |
-| Dashboard | `src/dashboard/` | Full-page trend history and category breakdown read from IndexedDB |
-
-Shared primitives, types, constants, and the production badge component live in `src/shared/`.
-
----
-
-## Local Development
-
-```bash
-npm install
-npm run type-check
-npm run build
-
-# Load in Chrome:
-# chrome://extensions → Developer mode ON → Load unpacked → select dist/
+```mermaid
+flowchart LR
+    DOM[Carrefour Kenya product pages] --> CS[Content script]
+    CS --> W[Shadow DOM widget]
+    CS --> SW[Background service worker]
+    SW --> OFF[Open Food Facts API]
+    SW --> DB[(IndexedDB)]
+    CS --> DB
 ```
 
-`npm run dev` works for previewing popup and dashboard in a browser tab. The content script and service worker need a real build + sideload cycle.
+## Data Model
 
----
+- products: product metadata, pack size, category, and source.
+- scans: timestamped scrape events.
+- scores: Nutri-Score letters and raw scoring details.
+- history: longitudinal shopping activity.
 
-## Phase Map (12-week plan)
+## Setup
 
-| Phase | Weeks | Status |
-|---|---|---|
-| 1. Foundations & Jumia scraper | 1–3 | 🔨 In progress |
-| 2. Nutrition data & score engine | 3–5 | ⏳ Pending |
-| 3. Score widget (Shadow DOM) | 5–6 | ✅ Structure done, wires real scores in Phase 2 |
-| 4. Comparison & alternatives | 6–8 | ⏳ Pending |
-| 5. History dashboard, multi-retailer | 8–10 | ⏳ Pending |
-| 6. Privacy docs & store submission | 10–12 | ⏳ Pending |
+1. Install dependencies with npm install.
+2. Run npm run lint and npm run typecheck.
+3. Build the extension with npm run build.
 
----
+## Scope Notes
 
-## Target Retailer — Phase 1
-
-**Jumia Kenya** (`www.jumia.co.ke`)
-
-Scraper adapter: `src/scraper/adapters/jumia.ts`
-- Listing card: `a.core` → name `.name`, price `.prc`
-- Checkout selectors: **TODO** — verify in Chrome DevTools on live cart page (Week 1)
+- The initial retailer target is Carrefour Kenya.
+- The inline widget is now a content script that mounts into a shadow DOM root.
+- Open Food Facts is wired as the nutrition lookup source, with Kenyan market seed queries in src/data/kenya-open-food-facts-seeds.ts.
+- The IndexedDB schema draft is frozen at version 1 so popup and dashboard reads can build against stable stores and indexes.
+- The popup now reads live counts from IndexedDB, and the dashboard reads the same stores for the fuller inspection surface.
